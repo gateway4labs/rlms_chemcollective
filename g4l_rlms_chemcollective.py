@@ -63,8 +63,11 @@ class ChemCollectiveFormCreator(BaseFormCreator):
 
 MIN_TIME = datetime.timedelta(hours=24)
 
+def get_languages():
+    return ['en'] # 'it', 'es']
+
 def get_laboratories():
-    labs_and_identifiers  = CHEMCOLLECTIVE.rlms_cache.get('get_laboratories',  min_time = MIN_TIME)
+    labs_and_identifiers  = CHEMCOLLECTIVE.cache.get('get_laboratories',  min_time = MIN_TIME)
     if labs_and_identifiers:
         labs, identifiers = labs_and_identifiers
         return labs, identifiers
@@ -85,7 +88,7 @@ def get_laboratories():
         name = link.find_parent("li").find("h4").text.strip()
         identifier = href.replace('vlab/', '')
         external_link = 'http://chemcollective.org/' + link['href']
-        link = url_for('chemcollective.chemcollective_get', identifier=identifier, _external=True)
+        link = url_for('chemcollective.chemcollective_get', lang='LANG', identifier=identifier, _external=True)
 
         lab_contents = requests.get(external_link).text
         message_str = lab_contents.split("message =")[1].split("}")[0].split('{')[1]
@@ -103,7 +106,7 @@ def get_laboratories():
         lab = Laboratory(name=name, laboratory_id=identifier, description=name)
         labs.append(lab)
 
-    CHEMCOLLECTIVE.rlms_cache['get_laboratories'] = (labs, identifiers)
+    CHEMCOLLECTIVE.cache['get_laboratories'] = (labs, identifiers)
     return labs, identifiers
 
 FORM_CREATOR = ChemCollectiveFormCreator()
@@ -155,6 +158,15 @@ class RLMS(BaseRLMS):
             raise LabNotFoundError("Laboratory not found: {}".format(laboratory_id))
 
         url = identifiers[laboratory_id]['link']
+
+        lang = 'en'
+        if 'locale' in kwargs:
+            lang = kwargs['locale']
+            if lang not in get_languages():
+                lang = 'en'
+
+        url = url.replace('LANG', lang)
+
         response = {
             'reservation_id' : url,
             'load_url' : url,
@@ -180,13 +192,18 @@ def populate_cache(rlms):
 
 chemcollective_blueprint = Blueprint('chemcollective', __name__)
 
-@chemcollective_blueprint.route('/id/<identifier>')
-def chemcollective_get(identifier):
+@chemcollective_blueprint.route('/lang/<lang>/id/<identifier>')
+def chemcollective_get(lang, identifier):
     laboratories, identifiers = get_laboratories()
     if identifier not in identifiers:
         raise LabNotFoundError("Laboratory not found: {}".format(identifier))
 
     message = identifiers[identifier]['message']
+
+    if lang not in get_languages():
+        lang = 'en'
+
+    message = message.replace('language: "en"', 'language: "{}"'.format(lang))
 
     return """<html>
     <body style="border: 0; margin: 0">
