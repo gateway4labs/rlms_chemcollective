@@ -80,6 +80,7 @@ def get_laboratories():
         # identifier: {
         #     'name': name,
         #     'link': link,
+        #     'message': (message)
         # }
     }
 
@@ -243,6 +244,26 @@ if DEBUG_LOW_LEVEL:
 sys.stdout.flush()
 
 if __name__ == '__main__':
+    from labmanager import app
+    with app.app_context():
+            global url_for
+            url_for = lambda *args, **kwargs: 'link'
+            laboratories, identifiers = get_laboratories()
+
+            for identifier_data in identifiers.values():
+                basic_urls = [ line.split('"')[1] for line in identifier_data['message'].splitlines() if 'assignmentPath' in line ]
+                if not basic_urls:
+                    continue
+                basic_url = basic_urls[0]
+                print(basic_url)
+                import requests
+                r = requests.get("http://chemcollective.org/chem/jsvlab/scripts/resources/assignments/it/" + basic_url + "/configuration.json")
+                if r.status_code == 404:
+                    print("NOT FOUND")
+                else:
+                    print("FOUND: ", r.status_code)
+
+
     rlms = RLMS('{}')
     labs = rlms.get_laboratories()
     for lab in labs:
