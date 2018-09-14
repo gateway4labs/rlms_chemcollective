@@ -222,7 +222,7 @@ def chemcollective_get(lang, identifier):
         };
     </script>
 
-    <iframe id="labframe" border="0" src="http://chemcollective.org/chem/jsvlab/vlab.html" style="min-width:1000px; width: 100%; height: 100%; min-height:650px; border-size: 0px"></iframe>
+    <iframe id="labframe" border="0" src="http://chemcollective.org/chem/jsvlab/vlab.html" style="width: 100%; height: 100%; border-size: 0px"></iframe>
 </body>
 </html>
 """
