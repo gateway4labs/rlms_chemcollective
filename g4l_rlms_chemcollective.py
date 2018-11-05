@@ -230,7 +230,7 @@ def chemcollective_get(lang, identifier):
 register_blueprint(chemcollective_blueprint, url='/chemcollective')
 
 CHEMCOLLECTIVE = register("ChemCollective", ['1.0'], __name__)
-CHEMCOLLECTIVE.add_local_periodic_task('Populating cache', populate_cache, hours = 23)
+CHEMCOLLECTIVE.add_local_periodic_task('Populating cache', populate_cache, hours = 13)
 
 DEBUG = CHEMCOLLECTIVE.is_debug() or (os.environ.get('G4L_DEBUG') or '').lower() == 'true' or False
 DEBUG_LOW_LEVEL = DEBUG and (os.environ.get('G4L_DEBUG_LOW') or '').lower() == 'true'
