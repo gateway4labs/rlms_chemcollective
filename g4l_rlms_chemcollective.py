@@ -150,7 +150,7 @@ class RLMS(BaseRLMS):
         laboratories, identifiers = get_laboratories()
         lab_data = identifiers.get(laboratory_id)
         if lab_data:
-            return [ lab_data['link'] ]
+            return [ lab_data['link'], 'http://chemcollective.org/chem/jsvlab/vlab.html' ]
         return []
 
     def reserve(self, laboratory_id, username, institution, general_configuration_str, particular_configurations, request_payload, user_properties, *args, **kwargs):
