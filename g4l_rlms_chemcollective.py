@@ -130,7 +130,7 @@ class RLMS(BaseRLMS):
         return labs
 
     def get_base_urls(self):
-        return [ 'http://chemcollective.org', 'https://chemcollective.org', 'http://www.chemcollective.org', 'http://www.chemcollective.org' ]
+        return [ 'http://chemcollective.org', 'https://chemcollective.org', 'http://www.chemcollective.org', 'https://www.chemcollective.org' ]
 
     def get_lab_by_url(self, url):
         results = url.rsplit('/vlab/', 1)
@@ -208,7 +208,7 @@ def chemcollective_get(lang, identifier):
 
     return """<html>
     <body style="border: 0; margin: 0">
-    <script src="http://chemcollective.org/assets/modules/activities/autograded_problems/common.js"></script>
+    <script src="https://gateway.golabz.eu/proxy/http://chemcollective.org/assets/modules/activities/autograded_problems/common.js"></script>
     <script>
         var session= numTimestamp()+"_"+intRandom(1000000,9999999);
         var userID=""+Math.floor(Math.random()*100000000);
@@ -218,11 +218,11 @@ def chemcollective_get(lang, identifier):
 
         window.onload = function() {
             var labframe = document.getElementById("labframe").contentWindow;
-            labframe.postMessage(message, "http://chemcollective.org");
+            labframe.postMessage(message, "https://gateway.golabz.eu");
         };
     </script>
 
-    <iframe id="labframe" border="0" src="http://chemcollective.org/chem/jsvlab/vlab.html" style="width: 100%; height: 100%; border-size: 0px"></iframe>
+    <iframe id="labframe" border="0" src="https://gateway.golabz.eu/proxy/http://chemcollective.org/chem/jsvlab/vlab.html" style="width: 100%; height: 100%; border-size: 0px"></iframe>
 </body>
 </html>
 """
